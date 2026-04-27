@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>efood Partner Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --red: #e8001c;
+    --dark-red: #c0001a;
+    --green: #00a651;
+    --blue: #1976d2;
+    --sidebar-bg: #fff;
+    --main-bg: #f5f5f5;
+    --text: #222;
+    --text-light: #666;
+    --border: #e0e0e0;
+    --sidebar-width: 230px;
+  }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--main-bg);
+    color: var(--text);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-width);
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+    transition: left 0.25s ease;
+  }
+
+  .sidebar-logo {
+    padding: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 900;
+    font-size: 18px;
+  }
+
+  .logo-efood { color: var(--red); }
+  .logo-partner {
+    background: var(--red);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+
+  .store-info {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .store-name {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .store-address {
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 4px;
+    line-height: 1.4;
+    font-weight: 600;
+  }
+
+  .nav-section {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-label {
+    font-size: 10px;
+    color: var(--text-light);
+    padding: 4px 16px 8px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .nav-item:hover { background: #f5f5f5; }
+  .nav-item.active { color: var(--red); font-weight: 700; background: #fff0f1; }
+  .nav-item svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+  .sidebar-collapse {
+    margin-top: auto;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-light);
+    font-weight: 600;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .topbar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 0 20px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    gap: 12px;
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .page-title {
+    font-size: 18px;
+    font-weight: 900;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .status-dot {
+    width: 10px; height: 10px;
+    background: var(--green);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .bell-icon { width: 20px; height: 20px; color: #666; cursor: pointer; }
+
+  .avatar {
+    width: 32px; height: 32px;
+    background: var(--red);
+    border-radius: 50%;
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .support-btn {
+    background: var(--red);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s, transform 0.1s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .support-btn:hover { background: var(--dark-red); transform: translateY(-1px); }
+  .support-btn:active { transform: translateY(0); }
+
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+
+  /* ── CONTENT ── */
+  .content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .orders-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .orders-col h2 {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .count {
+    background: #eee;
+    border-radius: 50%;
+    width: 22px; height: 22px;
+    font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-light);
+    font-weight: 700;
+  }
+
+  .count.has-orders { background: var(--red); color: white; }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    color: var(--text-light);
+    font-size: 13px;
+    font-weight: 600;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .empty-state svg { width: 60px; height: 60px; margin-bottom: 12px; opacity: 0.3; }
+
+  .order-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .order-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .order-number { font-weight: 800; font-size: 15px; }
+  .order-meta { font-size: 11px; color: var(--text-light); margin-top: 2px; font-weight: 600; }
+
+  .order-timer {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 3px solid var(--green);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+
+  .order-customer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .customer-name {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .ready-btn {
+    background: var(--blue);
+    color: white;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  /* ── BOTPRESS CHAT PANEL ── */
+  .chat-panel {
+    display: none;
+    position: fixed;
+    bottom: 20px; right: 20px;
+    width: 380px;
+    height: 560px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+    z-index: 1000;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .chat-panel.open { display: flex; }
+
+  .chat-panel-header {
+    background: var(--red);
+    color: white;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .chat-panel-header-left {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .chat-avatar {
+    width: 32px; height: 32px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  .chat-title { font-weight: 800; font-size: 14px; }
+  .chat-subtitle { font-size: 11px; opacity: 0.8; font-weight: 600; }
+
+  .chat-close {
+    background: none; border: none;
+    color: white; font-size: 20px;
+    cursor: pointer; padding: 4px; line-height: 1;
+  }
+
+  /* Embedded webchat inside panel */
+  #bp-embedded-webchat {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #bp-embedded-webchat .bpWebchat {
+    position: unset !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  #bp-embedded-webchat .bpFab { display: none !important; }
+
+  /* ── SIDEBAR OVERLAY ── */
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 99;
+  }
+  .sidebar-overlay.active { display: block; }
+
+  /* ── BACK LINK ── */
+  .back-link {
+    position: fixed;
+    bottom: 16px; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.06);
+    border: 1px solid var(--border);
+    color: var(--text-light);
+    font-family: 'Nunito', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    text-decoration: none;
+    z-index: 500;
+    transition: all 0.2s;
+  }
+  .back-link:hover { background: rgba(0,0,0,0.1); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    :root { --sidebar-width: 260px; }
+
+    .sidebar {
+      position: fixed;
+      left: -280px; top: 0;
+      z-index: 100;
+      box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+    }
+    .sidebar.open { left: 0; }
+
+    .main { width: 100%; }
+    .hamburger { display: flex; }
+
+    .topbar { padding: 0 12px; height: 52px; }
+    .page-title { font-size: 15px; }
+
+    .support-btn span { display: none; }
+    .support-btn { padding: 8px 10px; }
+
+    .content { padding: 14px 12px 60px; }
+
+    .orders-grid { grid-template-columns: 1fr; gap: 14px; }
+
+    /* Chat full screen on mobile */
+    .chat-panel {
+      width: 100vw; height: 100vh;
+      bottom: 0; right: 0;
+      border-radius: 0;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .topbar-right { gap: 8px; }
+    .avatar { width: 28px; height: 28px; font-size: 10px; }
+    .bell-icon { width: 17px; height: 17px; }
+    .status-dot { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo">
+      <span class="logo-efood">efood</span>
+      <span class="logo-partner">partner</span>
+    </div>
+  </div>
+
+  <div class="store-info">
+    <div class="store-name">
+      Burger House
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="store-address">Κωστά Βάρναλη 27, 14231, Αθήνα</div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Απόδοση</div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Live παραγγελίες
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Πίνακας ελέγχου
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Απόδοση
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Ιστορικό παραγγελιών
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Αξιολογήσεις
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Ανάπτυξη</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      Πεινιάτα / Προσφορές
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Διαχείριση</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      Διαχείριση καταλόγου
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Ωράριο Λειτουργίας
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Στατιστικά
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      Ρυθμίσεις
+    </div>
+  </div>
+
+  <div class="sidebar-collapse">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15"><polyline points="15 18 9 12 15 6"/></svg>
+    Σύμπτυξη
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="22" height="22">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+      <div class="page-title">Live παραγγελίες</div>
+    </div>
+    <div class="topbar-right">
+      <div class="status-dot"></div>
+      <svg class="bell-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <button class="support-btn" onclick="toggleChat()">
+        🎧 <span>Επικοινωνία</span>
+      </button>
+      <div class="avatar">BH</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="orders-grid">
+      <div class="orders-col">
+        <h2>Νέα <span class="count">0</span></h2>
+        <div class="empty-state">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 01-8 0"/>
+          </svg>
+          Δεν υπάρχουν νέες παραγγελίες
+        </div>
+      </div>
+
+      <div class="orders-col">
+        <h2>Έγινε αποδεκτή <span class="count has-orders">1</span></h2>
+        <div class="order-card">
+          <div class="order-card-top">
+            <div>
+              <div class="order-number">#246</div>
+              <div class="order-meta">654006322 · 3 προϊόντα</div>
+            </div>
+            <div class="order-timer">23</div>
+          </div>
+          <div class="order-customer">
+            <div class="customer-name">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              MARIA SKARVELAKI
+            </div>
+            <button class="ready-btn">Έτοιμη</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT PANEL -->
+<div class="chat-panel" id="chatPanel">
+  <div class="chat-panel-header">
+    <div class="chat-panel-header-left">
+      <div class="chat-avatar">🤖</div>
+      <div>
+        <div class="chat-title">efood Support Agent</div>
+        <div class="chat-subtitle">AI Assistant · Πάντα διαθέσιμος</div>
+      </div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div id="bp-embedded-webchat"></div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<a href="index.html" class="back-link">← Πίσω στο Demo</a>
+
+<script>
+  function toggleChat() {
+    const panel = document.getElementById('chatPanel');
+    const isOpen = panel.classList.contains('open');
+    if (isOpen) {
+      panel.classList.remove('open');
+      if (window.botpress) window.botpress.close();
+    } else {
+      panel.classList.add('open');
+      if (window.botpress) window.botpress.open();
+      else alert('Ο Agent φορτώνει... Δοκίμασε ξανά!');
+    }
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('active');
+  }
+
+  window.addEventListener('botpress:ready', function () {
+    window.botpress.on('webchat:closed', () => {
+      document.getElementById('chatPanel').classList.remove('open');
+    });
+  });
+</script>
+
+<!-- BOTPRESS - φορτώνει ΜΕΤΑ το DOM -->
+<script src="https://cdn.botpress.cloud/webchat/v3.6/inject.js"></script>
+<script src="https://files.bpcontent.cloud/2026/04/23/08/20260423084813-UEHSWJ12.js"></script>
+
+</body>
+</html>
